@@ -1,6 +1,8 @@
 package DemandasDm.api.rest.servicos;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +28,7 @@ public class ImplementacaoUserDetaisService implements UserDetailsService{
 			throw new UsernameNotFoundException("Usuario não encontrado");
 		}
 		
-		return null;
+		return new User(user.getLogin(), user.getSenha(), user.getAuthorities());
 	}
 
 }

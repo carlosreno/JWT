@@ -1,10 +1,10 @@
 package DemandasDm.api.rest;
 
-import org.springframework.boot.SpringApplication;import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication;import org.springframework.boot.autoconfigure.EnableAutoConfiguration;import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,8 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EntityScan(basePackages = {"DemandasDm.api.rest.Model"})
-@ComponentScan(basePackages = {"Demandas.*"})
-@EnableJpaRepositories(basePackages = {"DemandasDm.api.rest.Respository"} )
+@ComponentScan(basePackages = {"DemandasDm.*"})
+@EnableJpaRepositories(basePackages = {"DemandasDm.api.rest.Respository"})
 @EnableTransactionManagement
 @EnableWebMvc
 @RestController
@@ -23,6 +23,7 @@ public class Application implements WebMvcConfigurer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+		System.out.println(new BCryptPasswordEncoder().encode("35201814"));
 	}
 	
 	@Override

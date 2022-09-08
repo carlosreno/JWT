@@ -43,9 +43,9 @@ public class Usuario implements UserDetails{
 	foreignKey =@ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT)))
 	private List<Role> roles = new ArrayList<Role>();
  	
- 	private String Login;
+ 	private String login;
  	
-	private String Senha;
+	private String senha;
 	
 	
 	@OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
@@ -67,25 +67,35 @@ public class Usuario implements UserDetails{
 		this.id = id;
 	}
 
+	
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
 	public String getLogin() {
-		return Login;
+		return login;
 	}
 
 	public void setLogin(String login) {
-		Login = login;
+		this.login = login;
 	}
 
 	public String getSenha() {
-		return Senha;
+		return senha;
 	}
 
 	public void setSenha(String senha) {
-		Senha = senha;
+		this.senha = senha;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(Login);
+		return Objects.hash(login);
 	}
 
 	@Override
@@ -97,7 +107,7 @@ public class Usuario implements UserDetails{
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return Objects.equals(Login, other.Login);
+		return Objects.equals(login, other.login);
 	}
 
 	@Override
@@ -109,14 +119,14 @@ public class Usuario implements UserDetails{
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return this.Senha;
+		return this.senha;
 	}
 	
 	//UserDatails
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return this.Login;
+		return this.login;
 	}
 
 	@Override
