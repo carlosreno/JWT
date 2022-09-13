@@ -1,5 +1,12 @@
 package DemandasDm.api.rest.Controller;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.Buffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.RepositoryDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import DemandasDm.api.rest.Model.Usuario;
 import DemandasDm.api.rest.Respository.UsuarioRepository;
+import DemandasDm.api.rest.servicos.ServicoEmail;
 
 
 
@@ -30,6 +39,8 @@ import DemandasDm.api.rest.Respository.UsuarioRepository;
 @RequestMapping(value = "/usuario")
 public class IndexController {
 	
+	@Autowired
+	private ServicoEmail servicoEmail;
 	
 	@Autowired
 	private UsuarioRepository userRep;
@@ -58,14 +69,31 @@ public class IndexController {
 	
 	
 	@PostMapping(value = "/cadastrar", produces = "application/json")
-	public ResponseEntity<Usuario> Cadastrar(@RequestBody Usuario user){
+	public ResponseEntity<Usuario> Cadastrar(@RequestBody Usuario user) throws Exception{
 		
+		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
 		
 		for (int i = 0; i < user.getListTell().size(); i++) {
 			user.getListTell().get(i).setUser(user);
 		}
 		
+		URL url = new URL("https://viacep.com.br/ws/"+user.getCep()+"/json/");
+		URLConnection connection =  url.openConnection();
+		InputStream is =  connection.getInputStream();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		String cep =  "";
+		StringBuilder jsonCep =  new StringBuilder();
+		
+		while ((cep = br.readLine()) != null) {
+			jsonCep.append(cep);
+		}
+		System.out.println(jsonCep.toString());
+		
+		
 		Usuario userSalvo = userRep.save(user);
+		
+		
+		
 		return new ResponseEntity<Usuario>(userSalvo, HttpStatus.OK);
 	}
 	
@@ -74,6 +102,13 @@ public class IndexController {
 		
 		for (int pos = 0; pos < user.getListTell().size(); pos++) {
 			user.getListTell().get(pos).setUser(user);
+		}
+		
+		Usuario userTemp = userRep.findUserByLogin(user.getLogin());
+		
+		if (!user.getSenha().equals(userTemp.getSenha())) {
+			user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
+			
 		}
 		
 		Usuario userUp = userRep.save(user);
